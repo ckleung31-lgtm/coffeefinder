@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Green Door - 選豆工具</title>
+  <link rel="stylesheet" href="finder.css" />
+</head>
+<body>
+
+<div class="finder-container">
+  <header class="finder-header">
+    <h1>☕ 選豆工具 · Bean Finder</h1>
+    <p>選擇你的沖煮方式與喜歡的風味，我們推薦最適合的咖啡豆。</p>
+  </header>
+
+  <div class="finder-controls">
+    <!-- 沖煮方式 -->
+    <div class="control-group">
+      <label>沖煮方式 · Brew Method</label>
+      <div class="brew-methods">
+        <button data-method="filter" class="method-btn">手沖 · Filter</button>
+        <button data-method="espresso" class="method-btn">濃縮 · Espresso</button>
+        <button data-method="milk" class="method-btn">奶啡 · Milk Drink</button>
+        <button data-method="cold" class="method-btn">冷萃 · Cold Brew</button>
+      </div>
+    </div>
+
+    <!-- 風味偏好（多選） -->
+    <div class="control-group">
+      <label>風味偏好 · Flavor Profile</label>
+      <div class="flavor-tags" id="flavorTags"></div>
+      <p class="hint">可選多個，留空則只看沖煮方式</p>
+    </div>
+  </div>
+
+  <div class="finder-results">
+    <h2>推薦豆單 · Recommended Coffees</h2>
+    <div id="resultsList" class="results-grid"></div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="espressoData.js"></script>
+<script src="finder.js"></script>
+</body>
+</html>
