@@ -1,12 +1,12 @@
 // finder.js
-// 選豆工具，整合 data.js 和 espressoData.js 的咖啡豆，並提供商品購買連結
+// 選豆工具：先選風味（AND），顯示匹配分數 + 描述
+// 正體中文版本（無沖煮哲學區塊）
 
 document.addEventListener("DOMContentLoaded", () => {
   // --------------------------------------------------------------
-  // 1. 商品連結對照表（根據產品 ID）
+  // 1. 商品連結對照表
   // --------------------------------------------------------------
   const productUrls = {
-    // 手沖豆 (Filter)
     "bolivia-alasitas-geisha": "https://greendoorcoffee.com/product/bolivia-caranavi-alasitas-geisha-pink-honey-lot-24/",
     "colombia-camenzo": "https://greendoorcoffee.com/product/colombia-timana-camenzo-community-aerobic-washed-caturra/",
     "costa-rica-el-mango": "https://greendoorcoffee.com/product/costa-rica-brunca-rivense-el-mango-passion-honey/",
@@ -20,8 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
     "peru-geisha-inca": "https://greendoorcoffee.com/product/peru-cusco-cedrobamba-finca-basul-crispin-geisha-inca-sl-09-washed/",
     "rwanda-shyira-natural": "https://greendoorcoffee.com/product/rwanda-npr-nyabihu-shyira-a1-natural/",
     "uganda-sipi-falls-natural": "https://greendoorcoffee.com/product/uganda-sipi-falls-washing-station-natural/",
-
-    // Espresso 豆
     "brazil-a37": "https://greendoorcoffee.com/product/brazil-ipanema-premier-cru-black-a37-tobacco-dried-on-the-tree/",
     "colombia-decaf": "https://greendoorcoffee.com/product/colombia-decaffeinated-coffee-ea-processed/",
     "espresso-blend": "https://greendoorcoffee.com/product/espresso-blend/",
@@ -30,13 +28,36 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // --------------------------------------------------------------
-  // 2. 合併所有咖啡豆（從全域變數）
+  // 2. 描述文字（選豆工具專用）
+  // --------------------------------------------------------------
+  const descriptions = {
+    "bolivia-alasitas-geisha": "花香細緻、酸質透明，適合喜歡清爽茶感的咖啡愛好者。",
+    "colombia-camenzo": "紅果酸甜、平衡乾淨，日常手沖或淺焙濃縮皆宜。",
+    "costa-rica-el-mango": "熱帶水果甜感、蜜糖口感，body 圓潤，冷熱皆精彩。",
+    "don-mayo-anaerobic": "發酵果香、酒釀甜感，適合喜歡特殊處理法與高複雜度的玩家。",
+    "pacamara-washed": "奶油滑順、核果甜香，結構紮實，手沖與奶啡兩相宜。",
+    "ethiopia-chelbesa": "茉莉花、柑橘紅茶，經典衣索比亞風味，乾淨優雅。",
+    "gerbicho-anaerobic": "發酵莓果、葡萄酒感，濃郁甜感，適合重口味愛好者。",
+    "edido-natural": "藍莓果醬、果汁感，日曬處理的甜美代表作。",
+    "elida-natural": "莓果甜感、優雅酸質，巴拿馬日曬的經典之選。",
+    "hartmann-maragogipe": "大顆馬拉戈吉佩，草本甜感、結構清晰，層次豐富。",
+    "peru-geisha-inca": "花香絲滑、甜感細膩，印加瑰夏的溫潤氣質。",
+    "rwanda-shyira-natural": "黑莓酸甜、圓潤多汁，非洲日曬的狂野與平衡兼具。",
+    "uganda-sipi-falls-natural": "深色莓果、巧克力尾韻，東非日曬的厚實甜感。",
+    "brazil-a37": "黑朱古力、菸草甜，醇厚飽滿，適合傳統濃縮與奶啡。",
+    "colombia-decaf": "焦糖可可、低刺激甜感，低咖啡因但不妥協風味。",
+    "espresso-blend": "黑糖可可、奶油滑順，專為濃縮與奶啡設計的招牌拼配。",
+    "brazil-santos": "榛果朱古力、焦糖甜，堅果調性明確，入門首選。",
+    "green-door-blend": "黑糖奶油、平衡柔順，日常奶啡或美式都舒服。"
+  };
+
+  // --------------------------------------------------------------
+  // 3. 合併所有咖啡豆（data.js + espressoData.js）
   // --------------------------------------------------------------
   let allBeans = [];
   if (window.coffees) allBeans.push(...window.coffees);
   if (window.COFFEES) allBeans.push(...window.COFFEES);
 
-  // 去重（根據 id）
   const uniqueMap = new Map();
   allBeans.forEach(bean => {
     if (!uniqueMap.has(bean.id)) uniqueMap.set(bean.id, bean);
@@ -44,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const beans = Array.from(uniqueMap.values());
 
   // --------------------------------------------------------------
-  // 3. 風味標籤映射（基於 notes 關鍵字）
+  // 4. 風味標籤映射（基於 notes 關鍵字）
   // --------------------------------------------------------------
   const flavorMapping = {
     floral: ["Floral", "Jasmine", "花香", "白花", "茉莉花", "玫瑰"],
@@ -65,100 +86,77 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     }
-    // 如果沒有任何匹配，給一個默認標籤（堅果）
     if (tags.size === 0) tags.add("nutty");
     return Array.from(tags);
   }
 
   // --------------------------------------------------------------
-  // 4. 過濾邏輯（修正：風味為 AND，冷萃不再硬性過濾）
+  // 5. 計算匹配分數
   // --------------------------------------------------------------
-  function filterBeans(brewMethod, selectedFlavors) {
-    return beans.filter(bean => {
-      // 沖煮方式過濾（只做溫和的引導，不排除太多）
-      if (brewMethod === "filter") {
-        // 手沖：排除極深焙且不適合手沖的豆？實際上幾乎都可以，但可以標記
-        // 暫時不做硬性排除
-      } else if (brewMethod === "espresso") {
-        // 濃縮：排除極淺焙且不適合濃縮的豆？但用戶可自己嘗試，暫時保留所有
-      } else if (brewMethod === "milk") {
-        // 奶啡：建議醇厚、低酸豆，但不強制排除
-      } else if (brewMethod === "cold") {
-        // 冷萃：適合日曬、厭氧、發酵感、中深焙，但不做硬性排除，讓用戶探索
-        // 原來的邏輯已刪除，所有豆都會出現在冷萃結果中
-      }
+  function getMatchScore(beanTags, selectedFlavors) {
+    if (selectedFlavors.length === 0) return null;
+    const matched = selectedFlavors.filter(f => beanTags.includes(f)).length;
+    return `${matched}/${selectedFlavors.length}`;
+  }
 
-      // 風味過濾：選中的風味必須全部匹配（AND）
-      if (selectedFlavors.length > 0) {
-        const beanTags = getBeanFlavorTags(bean);
-        // 檢查是否所有選中的風味都在 beanTags 中
-        const allMatch = selectedFlavors.every(flavor => beanTags.includes(flavor));
-        if (!allMatch) return false;
-      }
-      return true;
+  // --------------------------------------------------------------
+  // 6. 風味過濾（AND）
+  // --------------------------------------------------------------
+  function filterBeansByFlavors(selectedFlavors) {
+    if (selectedFlavors.length === 0) return beans;
+    return beans.filter(bean => {
+      const beanTags = getBeanFlavorTags(bean);
+      return selectedFlavors.every(flavor => beanTags.includes(flavor));
     });
   }
 
   // --------------------------------------------------------------
-  // 5. 渲染結果（加入商品連結）
+  // 7. 渲染結果
   // --------------------------------------------------------------
-  function renderResults(beans) {
+  function renderResults(beans, selectedFlavors) {
     const container = document.getElementById("resultsList");
     if (beans.length === 0) {
-      container.innerHTML = `<div class="coffee-card" style="grid-column:1/-1; text-align:center;">沒有同時符合所有風味選擇的豆子，請減少風味標籤再試。</div>`;
+      container.innerHTML = `<div class="coffee-card" style="grid-column:1/-1; text-align:center;">沒有符合所有風味選擇的豆子，請減少風味標籤再試。</div>`;
       return;
     }
     container.innerHTML = beans.map(bean => {
       const url = productUrls[bean.id];
       const tags = getBeanFlavorTags(bean);
       const tagHtml = tags.map(t => `<span class="coffee-tag">${t}</span>`).join("");
+
+      const matchScore = getMatchScore(tags, selectedFlavors);
+      const scoreHtml = matchScore ? `<div class="match-score">風味匹配度 ${matchScore}</div>` : '';
+
+      const description = descriptions[bean.id] || "這隻豆風味豐富，歡迎試試看。";
+
+      const cardContent = `
+        <div class="coffee-card">
+          <h3>${bean.shortName || bean.name}</h3>
+          <div class="coffee-meta">${bean.origin || ""} · ${bean.process || ""} · ${bean.roast || ""}</div>
+          <div class="coffee-tags">${tagHtml}</div>
+          ${scoreHtml}
+          <div class="coffee-description">${description}</div>
+        </div>
+      `;
       if (url) {
-        return `
-          <a href="${url}" target="_blank" rel="noopener noreferrer" class="coffee-card-link">
-            <div class="coffee-card">
-              <h3>${bean.shortName || bean.name}</h3>
-              <div class="coffee-meta">${bean.origin || ""} · ${bean.process || ""} · ${bean.roast || ""}</div>
-              <div class="coffee-tags">${tagHtml}</div>
-            </div>
-          </a>
-        `;
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="coffee-card-link">${cardContent}</a>`;
       } else {
-        return `
-          <div class="coffee-card">
-            <h3>${bean.shortName || bean.name}</h3>
-            <div class="coffee-meta">${bean.origin || ""} · ${bean.process || ""} · ${bean.roast || ""}</div>
-            <div class="coffee-tags">${tagHtml}</div>
-          </div>
-        `;
+        return cardContent;
       }
     }).join("");
   }
 
   // --------------------------------------------------------------
-  // 6. UI 交互（風味多選，沖煮方式單選）
+  // 8. UI 交互
   // --------------------------------------------------------------
-  let currentBrewMethod = "filter";
   let selectedFlavors = [];
-
-  const methodBtns = document.querySelectorAll(".method-btn");
   const flavorContainer = document.getElementById("flavorTags");
-
   const flavorCategories = ["floral", "fruity", "nutty", "sweet", "funky"];
   const flavorNames = { floral:"花香", fruity:"果香", nutty:"堅果/可可", sweet:"甜感", funky:"發酵/酒香" };
   flavorContainer.innerHTML = flavorCategories.map(cat =>
     `<button class="flavor-tag" data-flavor="${cat}">${flavorNames[cat]}</button>`
   ).join("");
 
-  methodBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-      methodBtns.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      currentBrewMethod = btn.dataset.method;
-      updateResults();
-    });
-  });
-
-  // 重新綁定風味標籤事件（動態生成）
   function bindFlavorEvents() {
     document.querySelectorAll(".flavor-tag").forEach(btn => {
       btn.removeEventListener("click", flavorClickHandler);
@@ -180,12 +178,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateResults() {
-    const filtered = filterBeans(currentBrewMethod, selectedFlavors);
-    renderResults(filtered);
+    const filtered = filterBeansByFlavors(selectedFlavors);
+    renderResults(filtered, selectedFlavors);
   }
 
-  // 初始化
-  document.querySelector(".method-btn[data-method='filter']").classList.add("active");
   bindFlavorEvents();
   updateResults();
 });
