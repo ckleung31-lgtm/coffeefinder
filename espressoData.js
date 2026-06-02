@@ -130,7 +130,7 @@ const ESPRESSO_PHILOSOPHIES = {
 const COFFEES = [
   // ----- 原本 Espresso 豆 -----
   {
-    id: "green-door-blend",
+    id: "espresso-blend",
     shortName: "Green Door House Blend",
     origin: "Costa Rica · Guatemala · Brazil",
     process: "Mixed Process",
