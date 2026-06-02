@@ -130,19 +130,9 @@ const ESPRESSO_PHILOSOPHIES = {
 const COFFEES = [
   // ----- 原本 Espresso 豆 -----
   {
-    id: "espresso-blend",   // 新增明確的 Espresso Blend
-    shortName: "Espresso Blend",
-    origin: "Brazil · Colombia · Guatemala",
-    process: "Mixed",
-    roast: "Medium-Dark Roast",
-    type: "espresso",
-    notes: ["黑糖", "可可", "奶油感", "奶啡友善"],
-    supportedPhilos: ["traditional", "milkBalance", "americano", "ristretto"]
-  },
-  {
     id: "green-door-blend",
-    shortName: "Green Door Blend",
-    origin: "Brazil · Colombia",
+    shortName: "Green Door House Blend",
+    origin: "Costa Rica · Guatemala · Brazil",
     process: "Mixed Process",
     roast: "Medium-Dark Roast",
     type: "espresso",
@@ -157,9 +147,18 @@ const COFFEES = [
     roast: "Medium Roast",
     type: "espresso",
     notes: ["焦糖", "可可", "柔和甜感", "低刺激"],
-    supportedPhilos: ["milkBalance", "traditional", "americano","ristretto"]
+    supportedPhilos: ["milkBalance", "traditional", "americano", "ristretto"]
   },
-
+  {
+    id: "ethiopia-guji-abaya-fogge",
+    shortName: "Ethiopia Guji Abaya Fogge",
+    origin: "Guji, Ethiopia",
+    process: "Natural",
+    roast: "Light Roast",
+    type: "espresso",
+    notes: ["莓果", "熱帶水果", "花香", "高甜感", "乾淨尾韻"],
+    supportedPhilos: ["clarity", "turbo", "highExtraction", "blooming"]
+  },
   // ----- 從手沖版挑選適合 Espresso 的豆（12 隻）-----
   {
     id: "bolivia-alasitas-geisha",

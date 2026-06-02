@@ -274,6 +274,27 @@ const coffees = [
     }
   },
 
+  {
+    id: "ethiopia-guji-abaya-fogge",
+    type: "filter",
+    shortName: "Ethiopia Guji Abaya Fogge",
+    fullName: "Ethiopia Guji Abaya Fogge Homa – Multipurpose Natural G1",
+    origin: "Guji, Ethiopia",
+    process: "Natural",
+    roast: "Light Roast",
+    notes: ["莓果", "熱帶水果", "花香", "高甜感", "乾淨尾韻"],
+    brewBias: {
+      temp: 92,
+      ratio: "1:16.5",
+      grind: "White sugar-like",
+      flow: "Gentle",
+      pours: [
+        { title: "Bloom", amount: "50ml", timing: "0:00 – 0:35", note: "Even saturation." },
+        { title: "Main Pour", amount: "120ml", timing: "0:35 – 1:15", note: "Maintain stable flow." },
+        { title: "Sweet Finish", amount: "100ml", timing: "1:15 – 1:55", note: "Reduce turbulence near finish." }
+      ]
+    }
+  },
 /*
 
   // ======================================
