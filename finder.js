@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "colombia-decaf": "https://greendoorcoffee.com/product/colombia-decaffeinated-coffee-ea-processed/",
     "espresso-blend": "https://greendoorcoffee.com/product/espresso-blend/",
     "brazil-santos": "https://greendoorcoffee.com/product/brazil-santos/",
+    "ethiopia-guji-abaya-fogge": "https://greendoorcoffee.com/product/ethiopia-guji-abaya-fogge-homa-multipurpose-natural-g1/",
     "green-door-blend": "https://greendoorcoffee.com/product/green-door-blend/"
   };
 
@@ -48,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "colombia-decaf": "焦糖可可、低刺激甜感，低咖啡因但不妥協風味。",
     "espresso-blend": "黑糖可可、奶油滑順，專為濃縮與奶啡設計的招牌拼配。",
     "brazil-santos": "榛果朱古力、焦糖甜，堅果調性明確，入門首選。",
+    "ethiopia-guji-abaya-fogge": "日曬 Guji，莓果炸裂、熱帶水果甜感，乾淨尾韻，SOE 或手沖皆亮眼。",
     "green-door-blend": "黑糖奶油、平衡柔順，日常奶啡或美式都舒服。"
   };
 
